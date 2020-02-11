@@ -10,14 +10,15 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using System.IO;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Data.OleDb;
 
 namespace WindowsFormsApp1
 {
     public partial class Form2 : Form
     {
         int kol = 0;
-        Form f;
-        public Form2(Form F)
+        Form1 f;
+        public Form2(Form1 F)
         {
             InitializeComponent();
             f = F;
@@ -25,8 +26,16 @@ namespace WindowsFormsApp1
 
         private void Form2_Load(object sender, EventArgs e)
         {
+            //загрузка в combobox уникальные группы
+            string sql = "Select DISTINCT group from students ";
+            OleDbCommand command = new OleDbCommand(sql, f.myConnection);
+            OleDbDataReader reader = command.ExecuteReader();
+            comboBox1.Items.Clear();
+            while (reader.Read())
+            {
+                comboBox1.Items.Add(reader[0].ToString());
+            }
 
-           
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -53,7 +62,6 @@ namespace WindowsFormsApp1
 
             int k = kol * 2;
             int f = 0;
-
             string res = "";
             //запсь в столбцы
             foreach (DataGridViewRow row in dataGridView1.Rows)
@@ -66,16 +74,15 @@ namespace WindowsFormsApp1
                         if (index == 1 && k != 0)
                         {
                             k--;
-                            try
-                            {
+                            if (cell.Value.ToString().Length == 53)
+                            { 
                                 res = Результат(cell.Value.ToString());
                             }
-                            catch (System.NullReferenceException)
+                            else
                             {
                                 MessageBox.Show("Не все поля заполнены", "Внимание", MessageBoxButtons.OK);
                                 f = 1;
                             }
-
                         }
                         else
                         {
@@ -89,7 +96,6 @@ namespace WindowsFormsApp1
                 }
 
             }
-
         }
 
        void ДополнительныйОтвет ()
@@ -472,6 +478,7 @@ namespace WindowsFormsApp1
         string Результат (string line)
         {
             line= line.Replace(" ", "");
+
             if (line.Length == 53)
             {
                 StringBuilder fПрямые = new StringBuilder();
@@ -587,19 +594,36 @@ namespace WindowsFormsApp1
         {
             try
             {
-                copyAlltoClipboard();
-                Excel.Application xlexcel;
-                Excel.Workbook xlWorkBook;
-                Excel.Worksheet xlWorkSheet;
-                object misValue = System.Reflection.Missing.Value;
-                xlexcel = new Excel.Application();
-                xlexcel.Visible = true;
-                xlWorkBook = xlexcel.Workbooks.Add(misValue);
-                xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
-                Excel.Range CR = (Excel.Range)xlWorkSheet.Cells[1, 1];
-                CR.Select();
-                xlWorkSheet.PasteSpecial(CR, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, true);
-                xlWorkBook.SaveAs();
+                {
+                    /*copyAlltoClipboard();
+                    Excel.Application xlexcel;
+                    Excel.Workbook xlWorkBook;
+                    Excel.Worksheet xlWorkSheet;
+                    object misValue = System.Reflection.Missing.Value;
+                    xlexcel = new Excel.Application();
+                    xlexcel.Visible = true;
+                    xlWorkBook = xlexcel.Workbooks.Add(misValue);
+                    xlWorkSheet = (Excel.Worksheet)xlWorkBook.Worksheets.get_Item(1);
+                    Excel.Range CR = (Excel.Range)xlWorkSheet.Cells[1, 1];
+                    CR.Select();
+                    xlWorkSheet.PasteSpecial(CR, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, true);
+
+                    xlWorkBook.SaveAs();
+                    */
+                }
+                //сохранить результаты
+                string sql = "";
+                for (int i = 0; i < dataGridView1.Rows.Count;++i)
+                {
+                    sql = "update students set inputdata='" + dataGridView1.Rows[i].Cells[1].Value + "',result='" + dataGridView1.Rows[i].Cells[2].Value + "'," +
+                        "impulsiveness='" + dataGridView1.Rows[i].Cells[3].Value + "',weakness='" + dataGridView1.Rows[i].Cells[4].Value + "'," +
+                        "maladaptation='" + dataGridView1.Rows[i].Cells[5].Value + "',hostilityOfParents='" + dataGridView1.Rows[i].Cells[6].Value + "'," +
+                        "recklessness='" + dataGridView1.Rows[i].Cells[7].Value + "',addiction='" + dataGridView1.Rows[i].Cells[8].Value + "',socialDesitability='" +
+                        dataGridView1.Rows[i].Cells[9].Value + "' where [nameStudent]='" + dataGridView1.Rows[i].Cells[0].Value + "' and [group] ='" + comboBox1.Text + "' ;";
+                    OleDbCommand command = new OleDbCommand(sql, f.myConnection);
+                    command.ExecuteNonQuery();
+                }
+                MessageBox.Show("Данные успешно сохранены", "Успешно", MessageBoxButtons.OK);
             }
             catch (Exception) { }
             
@@ -609,6 +633,8 @@ namespace WindowsFormsApp1
 
         private void button3_Click(object sender, EventArgs e)
         {
+            { 
+            /*
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 kol = 0;
@@ -621,12 +647,39 @@ namespace WindowsFormsApp1
                 button1.Enabled = true;
                
             }
+            */
+        }
+            //загрузка учащихся и их результатов если нада
+            if (comboBox1.Text.Length > 0)
+            {
+                kol = 0;
+                dataGridView1.Rows.Clear();
+                string sql = "Select nameStudent,inputdata,result,impulsiveness,weakness,maladaptation,hostilityOfParents,recklessness,addiction,socialDesitability from students where [group] ='" +comboBox1.Text +"' ;";
+                OleDbCommand command = new OleDbCommand(sql, f.myConnection);
+                OleDbDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    dataGridView1.Rows.Add(reader[0].ToString(), reader[1].ToString(), reader[2].ToString(), reader[3].ToString(), reader[4].ToString(), reader[5].ToString(), reader[6].ToString(), reader[7].ToString(), reader[8].ToString(), reader[9].ToString());
+                    kol++;
+                }
+                button2.Enabled = true;
+                button1.Enabled = true;
 
+            }
+            else
+            {
+                MessageBox.Show("Выберите группу", "Внимание", MessageBoxButtons.OK);
+            }
         }
 
         private void Form2_FormClosed(object sender, FormClosedEventArgs e)
         {
             f.Show();
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
         }
     }
 }

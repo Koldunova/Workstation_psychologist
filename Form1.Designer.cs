@@ -89,7 +89,10 @@
             this.MaximumSize = new System.Drawing.Size(298, 501);
             this.MinimumSize = new System.Drawing.Size(298, 501);
             this.Name = "Form1";
+            this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Главное меню";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

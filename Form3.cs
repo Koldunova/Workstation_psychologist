@@ -898,5 +898,10 @@ namespace WindowsFormsApp1
                 MessageBox.Show("Не все поля заполнены или выбрано более одного варианта", "Внимание", MessageBoxButtons.OK);
             }
         }
+
+        private void dataGridView6_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }

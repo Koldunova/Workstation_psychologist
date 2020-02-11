@@ -394,6 +394,7 @@
             this.dataGridView6.Name = "dataGridView6";
             this.dataGridView6.Size = new System.Drawing.Size(544, 145);
             this.dataGridView6.TabIndex = 7;
+            this.dataGridView6.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView6_CellContentClick);
             // 
             // dataGridViewTextBoxColumn5
             // 
@@ -931,7 +932,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(1128, 568);
+            this.AutoSize = true;
+            this.ClientSize = new System.Drawing.Size(1128, 728);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.dataGridView11);
             this.Controls.Add(this.button1);
@@ -953,9 +955,11 @@
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.dataGridView2);
             this.Controls.Add(this.dataGridView1);
-            this.MaximumSize = new System.Drawing.Size(1144, 606);
-            this.MinimumSize = new System.Drawing.Size(1144, 606);
+            this.MaximumSize = new System.Drawing.Size(1144, 766);
+            this.MinimumSize = new System.Drawing.Size(1144, 766);
             this.Name = "Form3";
+            this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Тест 2";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form3_FormClosed);
             this.Load += new System.EventHandler(this.Form3_Load);
